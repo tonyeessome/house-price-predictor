@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction des Prix Immobiliers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        form {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prédiction des Prix Immobiliers</h1>
+    <form id="predictionForm">
+        <label for="location_id">Location ID:</label>
+        <input type="number" id="location_id" name="location_id" placeholder="Entrez l'ID de la localisation" required>
+
+        <label for="property_type">Property Type:</label>
+        <select id="property_type" name="property_type" required>
+            <option value="Flat">Flat</option>
+            <option value="House">House</option>
+            <option value="Lower Portion">Lower Portion</option>
+            <option value="Penthouse">Penthouse</option>
+            <option value="Room">Room</option>
+            <option value="Upper Portion">Upper Portion</option>
+        </select>
+
+        <label for="baths">Baths:</label>
+        <input type="number" id="baths" name="baths" placeholder="Nombre de salles de bain" required>
+
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="number" id="bedrooms" name="bedrooms" placeholder="Nombre de chambres" required>
+
+        <label for="area">Area in Square Meters:</label>
+        <input type="number" id="area" name="area_in_square_meters" placeholder="Surface en m²" required>
+
+        <button type="submit">Prédire le Prix</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultDiv = document.getElementById('result');
+    
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+    
+            // Récupérer les données du formulaire
+            const location_id = document.getElementById('location_id').value;
+            const property_type = document.getElementById('property_type').value; // Récupère la valeur sélectionnée
+            const baths = document.getElementById('baths').value;
+            const bedrooms = document.getElementById('bedrooms').value;
+            const area = document.getElementById('area').value;
+    
+            // Mapper les types de propriété en valeurs numériques
+            const propertyTypeMapping = {
+                "Flat": 1,
+                "House": 2,
+                "Lower Portion": 3,
+                "Penthouse": 4,
+                "Room": 5,
+                "Upper Portion": 6
+            };
+    
+            const propertyTypeEncoded = propertyTypeMapping[property_type];
+    
+            // Préparer les données pour l'API
+            const data = {
+                location_id: parseInt(location_id),
+                property_type: propertyTypeEncoded,
+                baths: parseInt(baths),
+                bedrooms: parseInt(bedrooms),
+                area_in_square_meters: parseFloat(area)
+            };
+    
+            // Envoyer une requête à l'API Flask
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+    
+                const result = await response.json();
+    
+                if (response.ok) {
+                    resultDiv.textContent = `Prix prédit : ${result.predicted_price} $`;
+                } else {
+                    resultDiv.textContent = `Erreur : ${result.error}`;
+                }
+            } catch (error) {
+                resultDiv.textContent = `Erreur de connexion : ${error.message}`;
+            }
+        });
+    </script>
+    
+</body>
+</html>
