@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: . # Use the current directory for the build context
+      dockerfile: Dockerfile # Specify the Dockerfile (optional if named "Dockerfile")
+    ports:
+      - "5001:5000" # Map container's port 5000 to host's port 5000
+    volumes:
+      - .:/app # Bind mount the current directory to /app in the container
+    environment:
+      - FLASK_ENV=development # Set Flask to development mode (optional)
+    command: python app.py # Override the CMD from Dockerfile if needed
