@@ -23,6 +23,11 @@ jobs:
         cd back_end
         pip install -r requirements.txt
 
+    - name: Test backend
+      run: |
+        cd back_end
+        pytest test/
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
