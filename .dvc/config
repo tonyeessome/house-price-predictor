@@ -1,0 +1,6 @@
+[core]
+    remote = remote
+['remote "myremote"']
+    url = s3://de2-2025-paris/de2-2025-sehabiague/house-price-predictor/
+['remote "remote"']
+    url = gdrive://1AMn_dcIO15o1uHyFm6y-33aMqhS1gVg8
